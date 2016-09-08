@@ -1,4 +1,4 @@
-##### Hotel app fueled by IoT
+#### Hotel app fueled by IoT
 
 This is the backend for a Hotel mobile app fueled by IoT. The backend provides connectivity to IoT sensors, the hotel reservation database and a node application that serves a mobile app, and web app dashboard.
 
