@@ -55,3 +55,4 @@ makeHotel('Cielo Roja', 'Ottawa', 'Canada', 'ottawa.png');
 makeHotel('Cielo Azul', 'Buenos Aires', 'Argentina', 'buenos.png');
 makeHotel('Cielo Estrella', 'Austin', 'Texas', 'austin.png');
 makeHotel('Cielo Gaudi', 'Barcelona', 'Spain', 'barcelona.png');
+makeHotel('Cielo Vegas', 'Las Vegas', 'Nevada', 'lasvegas.png');
