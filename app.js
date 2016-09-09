@@ -5,19 +5,21 @@
 //------------------------------------------------------------------------------
 
 var mongoose = require('mongoose');
-var configDB = require('./config/database.js');
+
 var Account = require('./models/account');
-var iotAppConfig = require('./config/iot.js');
-
 var Client = require('ibmiotf').IotfApplication;
-
-var configDB = require('./config/database.js');
 
 // configuration ===============================================================
 
-mongoose.connect(configDB.url); // connect to our database
+mongoose.connect(process.env.DATABASE_CREDENTIALS); // connect to our database
 
-var appClient = new Client(iotAppConfig);
+var appClient = new Client({
+  "org": "zrbfmw",
+  "id": Date.now().toString(),
+  "auth-method": "apikey",
+  "auth-key": process.env.IOT_AUTH_KEY,
+  "auth-token": process.env.IOT_AUTH_TOKEN
+});
 
 appClient.connect();
 
@@ -57,6 +59,9 @@ var cfenv = require('cfenv');
 
 // create a new express server
 var app = express();
+
+// require files from routes, controllers, etc...
+require('./routes')(app);
 
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));

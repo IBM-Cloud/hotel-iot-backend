@@ -1,67 +1,44 @@
 0 info it worked if it ends with ok
-1 verbose cli [ 'node', '/usr/local/bin/npm', 'i', 'bodyParser', '--save' ]
-2 info using npm@1.3.14
-3 info using node@v0.10.22
-4 verbose readDependencies using package.json deps
-5 verbose cache add [ 'bodyParser', null ]
-6 verbose cache add name=undefined spec="bodyParser" args=["bodyParser",null]
-7 verbose parsed url { protocol: null,
-7 verbose parsed url   slashes: null,
-7 verbose parsed url   auth: null,
-7 verbose parsed url   host: null,
-7 verbose parsed url   port: null,
-7 verbose parsed url   hostname: null,
-7 verbose parsed url   hash: null,
-7 verbose parsed url   search: null,
-7 verbose parsed url   query: null,
-7 verbose parsed url   pathname: 'bodyParser',
-7 verbose parsed url   path: 'bodyParser',
-7 verbose parsed url   href: 'bodyParser' }
-8 silly lockFile caa4c3c7-bodyParser bodyParser
-9 verbose lock bodyParser /Users/antonm/.npm/caa4c3c7-bodyParser.lock
-10 silly lockFile caa4c3c7-bodyParser bodyParser
-11 silly lockFile caa4c3c7-bodyParser bodyParser
-12 verbose addNamed [ 'bodyParser', '' ]
-13 verbose addNamed [ null, '*' ]
-14 silly lockFile e0b6bd45-bodyParser bodyParser@
-15 verbose lock bodyParser@ /Users/antonm/.npm/e0b6bd45-bodyParser.lock
-16 silly addNameRange { name: 'bodyParser', range: '*', hasData: false }
-17 verbose url raw bodyParser
-18 verbose url resolving [ 'https://registry.npmjs.org/', './bodyParser' ]
-19 verbose url resolved https://registry.npmjs.org/bodyParser
-20 info trying registry request attempt 1 at 23:07:03
-21 http GET https://registry.npmjs.org/bodyParser
-22 http 404 https://registry.npmjs.org/bodyParser
-23 silly registry.get cb [ 404,
-23 silly registry.get   { 'content-type': 'application/json',
-23 silly registry.get     'cache-control': 'max-age=0',
-23 silly registry.get     'content-length': '2',
-23 silly registry.get     'accept-ranges': 'bytes',
-23 silly registry.get     date: 'Sun, 04 Sep 2016 03:07:04 GMT',
-23 silly registry.get     via: '1.1 varnish',
-23 silly registry.get     age: '0',
-23 silly registry.get     connection: 'keep-alive',
-23 silly registry.get     'x-served-by': 'cache-jfk8136-JFK',
-23 silly registry.get     'x-cache': 'MISS',
-23 silly registry.get     'x-cache-hits': '0',
-23 silly registry.get     'x-timer': 'S1472958424.095241,VS0,VE105',
-23 silly registry.get     vary: 'Accept-Encoding' } ]
-24 silly addNameRange number 2 { name: 'bodyParser', range: '*', hasData: true }
-25 silly addNameRange versions [ undefined, [] ]
-26 error TypeError: Cannot read property 'latest' of undefined
-26 error     at next (/usr/local/lib/node_modules/npm/lib/cache.js:687:35)
-26 error     at /usr/local/lib/node_modules/npm/lib/cache.js:675:5
-26 error     at saved (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/get.js:142:7)
-26 error     at /usr/local/lib/node_modules/npm/node_modules/graceful-fs/polyfills.js:133:7
-26 error     at Object.oncomplete (fs.js:107:15)
-27 error If you need help, you may report this log at:
-27 error     <http://github.com/isaacs/npm/issues>
-27 error or email it to:
-27 error     <npm-@googlegroups.com>
-28 error System Darwin 15.5.0
-29 error command "node" "/usr/local/bin/npm" "i" "bodyParser" "--save"
-30 error cwd /Users/antonm/Desktop/code/hotel-iot-backend
-31 error node -v v0.10.22
-32 error npm -v 1.3.14
-33 error type non_object_property_load
-34 verbose exit [ 1, true ]
+1 verbose cli [ '/usr/local/Cellar/node/0.12.7_1/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'start' ]
+2 info using npm@3.3.9
+3 info using node@v5.0.0
+4 verbose run-script [ 'prestart', 'start', 'poststart' ]
+5 info lifecycle NodejsStarterApp@0.0.1~prestart: NodejsStarterApp@0.0.1
+6 silly lifecycle NodejsStarterApp@0.0.1~prestart: no script for prestart, continuing
+7 info lifecycle NodejsStarterApp@0.0.1~start: NodejsStarterApp@0.0.1
+8 verbose lifecycle NodejsStarterApp@0.0.1~start: unsafe-perm in lifecycle true
+9 verbose lifecycle NodejsStarterApp@0.0.1~start: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/Users/lindsayroberts/Documents/Cloud Platform/hotel-iot-backend/node_modules/.bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+10 verbose lifecycle NodejsStarterApp@0.0.1~start: CWD: /Users/lindsayroberts/Documents/Cloud Platform/hotel-iot-backend
+11 silly lifecycle NodejsStarterApp@0.0.1~start: Args: [ '-c', 'node app.js' ]
+12 silly lifecycle NodejsStarterApp@0.0.1~start: Returned: code: 1  signal: null
+13 info lifecycle NodejsStarterApp@0.0.1~start: Failed to exec start script
+14 verbose stack Error: NodejsStarterApp@0.0.1 start: `node app.js`
+14 verbose stack Exit status 1
+14 verbose stack     at EventEmitter.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/lifecycle.js:233:16)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at EventEmitter.emit (events.js:172:7)
+14 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at ChildProcess.emit (events.js:172:7)
+14 verbose stack     at maybeClose (internal/child_process.js:818:16)
+14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+15 verbose pkgid NodejsStarterApp@0.0.1
+16 verbose cwd /Users/lindsayroberts/Documents/Cloud Platform/hotel-iot-backend
+17 error Darwin 15.4.0
+18 error argv "/usr/local/Cellar/node/0.12.7_1/bin/node" "/usr/local/bin/npm" "start"
+19 error node v5.0.0
+20 error npm  v3.3.9
+21 error code ELIFECYCLE
+22 error NodejsStarterApp@0.0.1 start: `node app.js`
+22 error Exit status 1
+23 error Failed at the NodejsStarterApp@0.0.1 start script 'node app.js'.
+23 error This is most likely a problem with the NodejsStarterApp package,
+23 error not with npm itself.
+23 error Tell the author that this fails on your system:
+23 error     node app.js
+23 error You can get their info via:
+23 error     npm owner ls NodejsStarterApp
+23 error There is likely additional logging output above.
+24 verbose exit [ 1, true ]
