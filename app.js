@@ -5,11 +5,21 @@
 //------------------------------------------------------------------------------
 
 var mongoose = require('mongoose');
+var fs = require('fs');
+var dotenv = require('dotenv');
 
 var Account = require('./models/account');
 var Client = require('ibmiotf').IotfApplication;
 
 // configuration ===============================================================
+fs.createReadStream('config/.sample-env')
+  .pipe(fs.createWriteStream('config/.env'));
+
+/*
+  IMPORTANT: DotEnv is only for dev environments. Please be sure to set any
+  environment variables traditionally in the production environment.
+ */
+dotenv.load();
 
 mongoose.connect(process.env.DATABASE_CREDENTIALS); // connect to our database
 
