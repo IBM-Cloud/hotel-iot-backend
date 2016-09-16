@@ -20,7 +20,8 @@
     "passport": "~0.3.2",
     "request": "~2.74.0",
     "twitter": "^1.4.0",
-    "watson-developer-cloud": "^2.1.4"
+    "watson-developer-cloud": "^2.1.4",
+    "yelp": "^1.0.1"
   },
   "repository": {},
   "engines": {
