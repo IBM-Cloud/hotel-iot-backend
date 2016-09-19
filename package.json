@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
+    "bluebird": "^3.4.6",
     "body-parser": "~1.15.2",
     "cfenv": "1.0.x",
     "connect-flash": "~0.1.1",
@@ -18,7 +19,7 @@
     "mongoose": "~4.5.7",
     "morgan": "~1.7.0",
     "passport": "~0.3.2",
-    "request": "~2.74.0",
+    "request": "^2.74.0",
     "twitter": "^1.4.0",
     "watson-developer-cloud": "^2.1.4",
     "yelp": "^1.0.1"

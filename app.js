@@ -71,8 +71,12 @@ var cfenv = require('cfenv');
 var app = express();
 
 // require files from routes, controllers, etc...
-require('./routes')(app);
+// require('./routes')(app);
+// var routes = require('./routes');
+// app.use('/', routes);
 
+var api = require('./api');
+app.use('/api', api);
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json()); // for parsing application/json
