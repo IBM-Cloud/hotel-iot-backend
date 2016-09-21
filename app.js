@@ -5,11 +5,21 @@
 //------------------------------------------------------------------------------
 
 var mongoose = require('mongoose');
+var fs = require('fs');
+var dotenv = require('dotenv');
 
 var Account = require('./models/account');
 var Client = require('ibmiotf').IotfApplication;
 
 // configuration ===============================================================
+fs.createReadStream('config/.sample-env')
+  .pipe(fs.createWriteStream('config/.env'));
+
+/*
+  IMPORTANT: DotEnv is only for dev environments. Please be sure to set any
+  environment variables traditionally in the production environment.
+ */
+dotenv.load();
 
 mongoose.connect(process.env.DATABASE_CREDENTIALS); // connect to our database
 
@@ -61,8 +71,12 @@ var cfenv = require('cfenv');
 var app = express();
 
 // require files from routes, controllers, etc...
-require('./routes')(app);
+// require('./routes')(app);
+// var routes = require('./routes');
+// app.use('/', routes);
 
+var api = require('./api');
+app.use('/api', api);
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json()); // for parsing application/json
