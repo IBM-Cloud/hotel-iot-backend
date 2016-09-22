@@ -33,28 +33,38 @@ var conversation = Watson.conversation({
 
 module.exports.getTweets = function(req, res) {
   getTweets(req.params.username).then(function (data) {
-    var promises = [];
+    var promises = []
 
+    // Get Keywords from AlchemyAPI
     for (var i = 0; i < data.length; i++) {
-      var promise = getKeywords(data[i].text);
-      promises.push(promise);
+      var alchemyPromise = getKeywords(data[i].text);
+      promises.push(alchemyPromise);
+
+      var conversationPromise = getEntities(data[i].text);
+      promises.push(conversationPromise);
     }
 
-    Promise.all(promises).then(function(data) {
-      var apiPromises = [];
+    Promise.all(promises)
+    .then(function(data) {
+      var alchemyData = [];
+      var conversationData = [];
+      var recommendationsData = [];
 
-      for (var j = 0; j < data.length; j++) {
-        var apiPromise = getAPI(data[j].tweet);
-        apiPromises.push(apiPromise);
-        console.log(apiPromises);
+      for (var j = 0; j < data.length; j+=2) {
+        recommendationsData.push({
+          tweet: data[j].tweet,
+          keywords: data[j].keywords,
+          concepts: data[j].concepts,
+          entities: data[j+1]
+        });
       }
 
-      Promise.all(apiPromises).then(function(d) {
-        console.log(d);
-        res.json(d);
-      }).catch(function(error) {
-        res.json(error);
+      res.json({
+        data: recommendationsData
       });
+    })
+    .catch(function (e) {
+      res.send(e);
     });
   }).catch(function(error) {
     res.json(error);
@@ -76,23 +86,37 @@ function getTweets(username) {
 function getKeywords(text) {
   return new Promise(function(resolve, reject) {
     var parameters = {
-      extract: 'keywords',
+      extract: 'keywords,concepts',
       text: text
     };
 
     alchemy_language.combined(parameters, function(error, data) {
-      if(error) reject(error);
-      else
-        result = {
+      if(error) {
+        reject(error);
+      } else {
+        var result = {
           tweet: parameters.text,
-          keywords: data.keywords
+          keywords: data.keywords,
+          concepts: []
         }
+
+        for (var i = 0; i < data.concepts.length; i++) {
+          var concept = {
+            relevance: data.concepts[i].relevance,
+            text: data.concepts[i].text
+
+          }
+
+          result.concepts.push(concept);
+        }
+
         resolve(result);
+      }
     });
   });
 }
 
-function getAPI(text) {
+function getEntities(text) {
   return new Promise(function(resolve, reject) {
     conversation.message({
       workspace_id: process.env.CONVERSATION_WORKSPACE_ID,
@@ -101,7 +125,17 @@ function getAPI(text) {
       if (error) {
         reject(error);
       } else {
-        resolve(response);
+        var entities = [];
+        console.log(response);
+        for (var i = 0; i < response.entities.length; i++) {
+          var entity = {
+            entity: response.entities[i].entity,
+            value: response.entities[i].value
+          };
+
+          entities.push(entity);
+        }
+        resolve(entities);
       }
     });
   });
