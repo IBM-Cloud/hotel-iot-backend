@@ -46,8 +46,6 @@ module.exports.getTweets = function(req, res) {
 
     Promise.all(promises)
     .then(function(data) {
-      var alchemyData = [];
-      var conversationData = [];
       var recommendationsData = [];
 
       for (var j = 0; j < data.length; j+=2) {
@@ -59,9 +57,38 @@ module.exports.getTweets = function(req, res) {
         });
       }
 
-      res.json({
-        data: recommendationsData
-      });
+      var scores = {};
+
+      for(var k = 0; k < recommendationsData.length; k++) {
+        for(var l = 0; l < recommendationsData[k].entities.length; l++) {
+          console.log(recommendationsData[k].entities[l]);
+          if(!scores[recommendationsData[k].entities[l].entity]) {
+            scores[recommendationsData[k].entities[l].entity] = {};
+            scores[recommendationsData[k].entities[l].entity][recommendationsData[k].entities[l].value] = 1;
+          } else {
+            if(!scores[recommendationsData[k].entities[l].entity][recommendationsData[k].entities[l].value]) {
+              scores[recommendationsData[k].entities[l].entity][recommendationsData[k].entities[l].value] = 1;
+            } else {
+              scores[recommendationsData[k].entities[l].entity][recommendationsData[k].entities[l].value] += 1;
+            }
+          }
+        }
+      }
+
+      console.log(scores);
+      if(scores.food) {
+        var keyword = Object.keys(scores.food).reduce(function(a, b) {
+          return scores.food[a] > scores.food[b] ? a : b
+        });
+
+        yelp.search({term: keyword, location: 'Las Vegas'})
+        .then(function(data) {
+          res.json(data);
+        })
+        .catch(function(err) {
+          res.send(err);
+        });
+      }
     })
     .catch(function (e) {
       res.send(e);
@@ -75,7 +102,7 @@ function getTweets(username) {
   return new Promise(function(resolve, reject) {
     client.get('statuses/user_timeline', {
       screen_name: username,
-      count: 5
+      count: 50
     }, function(error, tweets) {
       if (error) reject(error);
       else resolve(tweets);
@@ -87,11 +114,14 @@ function getKeywords(text) {
   return new Promise(function(resolve, reject) {
     var parameters = {
       extract: 'keywords,concepts',
-      text: text
+      text: text,
+      language: 'english'
     };
 
     alchemy_language.combined(parameters, function(error, data) {
       if(error) {
+        console.log(parameters);
+        console.log("Alchemy Error!");
         reject(error);
       } else {
         var result = {
@@ -123,10 +153,10 @@ function getEntities(text) {
       input: {'text': text.trim().replace(/(\r\n|\n|\r)/gm," ")}
     }, function(error, response) {
       if (error) {
+        console.log("Conversation Error");
         reject(error);
       } else {
         var entities = [];
-        console.log(response);
         for (var i = 0; i < response.entities.length; i++) {
           var entity = {
             entity: response.entities[i].entity,
