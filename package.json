@@ -22,7 +22,9 @@
     "request": "^2.74.0",
     "twitter": "^1.4.0",
     "watson-developer-cloud": "^2.1.4",
-    "yelp": "^1.0.1"
+    "yelp": "^1.0.1",
+    "moment": "~2.15.1",
+    "moment-range": "~2.2.0"
   },
   "repository": {},
   "engines": {

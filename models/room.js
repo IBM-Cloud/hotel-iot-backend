@@ -8,7 +8,7 @@ var RoomSchema = mongoose.Schema({
     macaddress: String,
     beds: Number,
     cost: Number,
-    reservations: [Reservation]
+    reservations: [Reservation.schema]
 })
 
 module.exports = mongoose.model('Room', RoomSchema);

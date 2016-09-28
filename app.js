@@ -9,26 +9,32 @@ var fs = require('fs');
 var dotenv = require('dotenv');
 
 var Account = require('./models/account');
+var Hotel = require('./models/hotel');
+var Reservation = require('./models/reservation');
 var Client = require('ibmiotf').IotfApplication;
+
+var moment = require('moment');
+require('moment-range');
+var Hotel = require('./models/hotel');
 
 // configuration ===============================================================
 fs.createReadStream('config/.sample-env')
-  .pipe(fs.createWriteStream('config/.env'));
+    .pipe(fs.createWriteStream('config/.env'));
 
 /*
   IMPORTANT: DotEnv is only for dev environments. Please be sure to set any
   environment variables traditionally in the production environment.
  */
+
 dotenv.load();
 
-mongoose.connect(process.env.DATABASE_CREDENTIALS); // connect to our database
-
+mongoose.connect(process.env.DATABASE_CREDENTIALS);
 var appClient = new Client({
-  "org": "zrbfmw",
-  "id": Date.now().toString(),
-  "auth-method": "apikey",
-  "auth-key": process.env.IOT_AUTH_KEY,
-  "auth-token": process.env.IOT_AUTH_TOKEN
+    "org": "zrbfmw",
+    "id": Date.now().toString(),
+    "auth-method": "apikey",
+    "auth-key": "a-zrbfmw-hxp8jukeqv",
+    "auth-token": "bsV(PDUuU80IEIYFYO"
 });
 
 appClient.connect();
@@ -75,8 +81,8 @@ var app = express();
 // var routes = require('./routes');
 // app.use('/', routes);
 
-var api = require('./api');
-app.use('/api', api);
+//var api = require('./api');
+//app.use('/api', api);
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json()); // for parsing application/json
@@ -129,12 +135,145 @@ app.post('/login', function (req, res) {
 
 })
 
+
+app.post('/reservations', function (req, res) {
+    var details = req.body;
+    var username = details.account;
+    var hotel = details.hotel;
+    var checkin = details.checkin;
+    var checkout = details.checkout;
+
+
+    Hotel.findOne({
+        'name': hotel
+    }, function (err, record) {
+
+        var availablerooms = new Array();
+
+        var floorlevel = 0;
+
+        console.log('searching for free rooms');
+
+        record.floors.forEach(function (floor) {
+
+            floor.rooms.forEach(function (room) {
+
+                var freeroom = true;
+
+                room.reservations.forEach(function (reservation) {
+
+                    range = moment().range(reservation.start, reservation.end);
+
+                    if (range.contains(checkin) || range.contains(checkout)) {
+
+
+                    } else {
+
+                        /* this room is free */
+
+                        var available = {
+                            floor: floorlevel,
+                            room: room.number
+                        }
+
+                        availablerooms.push(available);
+                    }
+                })
+
+                if (room.reservations.length === 0) {
+                    var available = {
+                        floor: floorlevel,
+                        room: room.number
+                    }
+
+                    availablerooms.push(available);
+                }
+            })
+
+            console.log('next floor');
+
+            floorlevel++;
+        })
+
+
+        if (availablerooms.length > 0) {
+
+            console.log('reserving a room');
+
+            console.log('floor: ' + availablerooms[0].floor + ' - ' + 'room: ' + availablerooms[0].room);
+
+            var target = record.floors[availablerooms[0].floor].rooms[availablerooms[0].room - 1]
+
+            var booking = new Reservation();
+
+            booking.start = new Date(checkin);
+            booking.end = new Date(checkout);
+            booking.hotel = hotel;
+            booking.guest = username;
+
+            target.reservations.push(booking);
+
+            record.save(function (err) {
+                if (err) {
+                    throw err;
+                }
+            });
+        }
+
+        console.log(record);
+
+        console.log(availablerooms);
+
+    })
+
+    console.log(hotel);
+})
+
+
 app.get('/account', function (req, res) {
 
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({
         outcome: 'failure'
     }, null, 3));
+})
+
+app.get('/hotels', function (req, res) {
+
+    var response = {
+        outcome: 'failure'
+    };
+
+    Hotel.find({}, function (err, hotels) {
+
+        if (err) {
+
+        } else {
+
+            var identifiers = new Array();
+
+            //            console.log(JSON.stringify(hotels));
+
+
+            for (var h = 0; h < hotels.length; h++) {
+                console.log(JSON.stringify(hotels[h]));
+
+                var simple = {
+                    name: hotels[h].name,
+                    location: hotels[h].location
+                }
+                identifiers.push(simple)
+            }
+
+            response.hotels = identifiers;
+            response.outcome = 'success';
+        }
+
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(response, null, 3));
+    })
+
+
 })
 
 app.post('/newaccount', function (req, res) {
