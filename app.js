@@ -135,6 +135,10 @@ app.post('/login', function (req, res) {
 
 })
 
+app.get('/reservations', function (req, res) {
+
+})
+
 
 app.post('/reservations', function (req, res) {
     var details = req.body;
@@ -142,7 +146,6 @@ app.post('/reservations', function (req, res) {
     var hotel = details.hotel;
     var checkin = details.checkin;
     var checkout = details.checkout;
-
 
     Hotel.findOne({
         'name': hotel
@@ -160,47 +163,41 @@ app.post('/reservations', function (req, res) {
 
                 var freeroom = true;
 
-                room.reservations.forEach(function (reservation) {
-
-                    range = moment().range(reservation.start, reservation.end);
-
-                    if (range.contains(checkin) || range.contains(checkout)) {
-
-
-                    } else {
-
-                        /* this room is free */
-
-                        var available = {
-                            floor: floorlevel,
-                            room: room.number
-                        }
-
-                        availablerooms.push(available);
-                    }
-                })
+                var available = {
+                    floor: floorlevel,
+                    room: room.number
+                }
 
                 if (room.reservations.length === 0) {
-                    var available = {
-                        floor: floorlevel,
-                        room: room.number
-                    }
 
                     availablerooms.push(available);
+
+                } else {
+
+                    room.reservations.forEach(function (reservation) {
+
+                        range = moment().range(reservation.start, reservation.end);
+
+                        if (range.contains(checkin) || range.contains(checkout)) {
+
+                            /* this room is not free */
+
+                        } else {
+
+                            /* this room is free */
+
+                            availablerooms.push(available);
+                        }
+                    })
                 }
             })
-
-            console.log('next floor');
 
             floorlevel++;
         })
 
-
         if (availablerooms.length > 0) {
 
             console.log('reserving a room');
-
-            console.log('floor: ' + availablerooms[0].floor + ' - ' + 'room: ' + availablerooms[0].room);
 
             var target = record.floors[availablerooms[0].floor].rooms[availablerooms[0].room - 1]
 
@@ -219,19 +216,11 @@ app.post('/reservations', function (req, res) {
                 }
             });
         }
-
-        console.log(record);
-
-        console.log(availablerooms);
-
     })
-
-    console.log(hotel);
 })
 
 
 app.get('/account', function (req, res) {
-
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({
         outcome: 'failure'
