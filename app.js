@@ -137,10 +137,43 @@ app.post('/login', function (req, res) {
 
 app.get('/reservations', function (req, res) {
 
+    var reservations = new Array();
+
+    var response;
+
+    Hotel.find({}, function (err, hotels) {
+
+        hotels.forEach(function (hotel) {
+
+            hotel.floors.forEach(function (floor) {
+
+                floor.rooms.forEach(function (room) {
+
+                    room.reservations.forEach(function (reservation) {
+
+                        console.log('guest: ' + reservation.guest);
+
+                        if (reservation.guest === req.query.account) {
+
+                            reservations.push(reservation);
+                        }
+                    });
+                })
+            })
+        })
+
+        response = {
+            "reservations": reservations
+        };
+
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(response, null, 3));
+    })
 })
 
 
 app.post('/reservations', function (req, res) {
+
     var details = req.body;
     var username = details.account;
     var hotel = details.hotel;
@@ -199,7 +232,9 @@ app.post('/reservations', function (req, res) {
 
             console.log('reserving a room');
 
-            var target = record.floors[availablerooms[0].floor].rooms[availablerooms[0].room - 1]
+            /* Want to eventually pick a room with a choice of beds */
+
+            var target = record.floors[availablerooms[0].floor].rooms[availablerooms[0].room - 1];
 
             var booking = new Reservation();
 
@@ -261,8 +296,6 @@ app.get('/hotels', function (req, res) {
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(response, null, 3));
     })
-
-
 })
 
 app.post('/newaccount', function (req, res) {
