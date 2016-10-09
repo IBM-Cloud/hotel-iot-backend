@@ -28,6 +28,9 @@ fs.createReadStream('config/.sample-env')
 
 dotenv.load();
 
+var temp;
+var light;
+
 mongoose.connect(process.env.DATABASE_CREDENTIALS);
 var appClient = new Client({
     "org": "zrbfmw",
@@ -56,10 +59,31 @@ appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, p
     var myData = {
         'DelaySeconds': 10
     };
+
     myData = JSON.stringify(myData);
     appClient.publishDeviceCommand("NUC-CIELO", deviceId, "blink", "json", 1);
 
-    console.log(JSON.parse(payload));
+    var datareceived = JSON.parse(payload)
+
+    if (datareceived.d.temp != undefined) {
+        temp = datareceived.d.temp;
+    }
+
+    if (datareceived.d.light != undefined) {
+        light = datareceived.d.light;
+    }
+
+
+    //
+    //    if (payload.d.hasOwnProperty('temp')) {
+    //        temp = payload.d.temp;
+    //    }
+
+
+    if (payload) {
+        console.log(datareceived.d)
+    };
+
 });
 
 
@@ -134,6 +158,35 @@ app.post('/login', function (req, res) {
     })
 
 })
+
+app.get('/temp', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({
+        temp: temp
+    }, null, 3));
+})
+
+app.get('/light', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({
+        light: light
+    }, null, 3));
+})
+
+app.get('/environment', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({
+        light: light,
+        temp: temp
+    }, null, 3));
+})
+
+app.post('/lighting', function (req, res) {
+
+
+
+});
+
 
 app.get('/reservations', function (req, res) {
 
