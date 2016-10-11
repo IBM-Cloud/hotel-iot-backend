@@ -13,6 +13,7 @@ var Hotel = require('./models/hotel');
 var Reservation = require('./models/reservation');
 var Client = require('ibmiotf').IotfApplication;
 
+
 var moment = require('moment');
 require('moment-range');
 var Hotel = require('./models/hotel');
@@ -30,6 +31,8 @@ dotenv.load();
 
 var temp;
 var light;
+
+var Recommendations = require('./controllers/recommendations');
 
 mongoose.connect(process.env.DATABASE_CREDENTIALS);
 var appClient = new Client({
@@ -87,7 +90,6 @@ appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, p
 });
 
 
-
 // This application uses express as its web server
 // for more info, see: http://expressjs.com
 var express = require('express');
@@ -100,13 +102,6 @@ var cfenv = require('cfenv');
 // create a new express server
 var app = express();
 
-// require files from routes, controllers, etc...
-// require('./routes')(app);
-// var routes = require('./routes');
-// app.use('/', routes);
-
-//var api = require('./api');
-//app.use('/api', api);
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json()); // for parsing application/json
@@ -208,7 +203,20 @@ app.get('/reservations', function (req, res) {
 
                         if (reservation.guest === req.query.account) {
 
-                            reservations.push(reservation);
+
+                            var structure = new Object();
+                            structure.start = reservation.start;
+                            structure.end = reservation.end;
+                            structure.hotel = reservation.hotel;
+                            structure.guest = reservation.guest;
+                            structure.location = hotel.location;
+                            structure.icon = hotel.icon;
+
+                            console.log(hotel.location);
+
+                            console.log(JSON.stringify(reservation));
+
+                            reservations.push(structure);
                         }
                     });
                 })
@@ -355,6 +363,17 @@ app.post('/newaccount', function (req, res) {
     var account = new Account();
     var claim = req.body;
 })
+
+
+app.get('/tips', function (req, res) {
+    var account = req.query.username;
+
+    Recommendations.getTweets(req, res);
+
+    console.log(account);
+
+})
+
 
 // get the app environment from Cloud Foundry
 var appEnv = cfenv.getAppEnv();
